@@ -135,25 +135,30 @@ def getMaterialList(content):
                 materialList[-1]['record'] = IsogenRecord
                 materialList[-1]['mtoc'] = int(line.split(',')[2])
                 materialList[-1]['partNo'] = int(line[82:86])
-                materialList[-1]['size1'] = int(line[72:78])
+                materialList[-1]['size1'] = int(line[72:78]) / 16.0  #根据规律发现尺寸为该数据除16
                 #提取管子长度
                 if IsogenRecord == 100:
                     x1,y1,z1,x2,y2,z2 = map(int,re.split('\s+',line[7:72].strip()))
-                    materialList[-1]['mm'] = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+                    materialList[-1]['mm'] = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2) / 100
+            #提取tag
             elif IsogenRecord == -22:
                 materialList[-1]['tag'] = line[6:]
+            #提取olet分支尺寸及件号
             elif IsogenRecord == 41:
-                materialList[-1]['size2'] = int(line[72:78])
-                materialList[-1]['partNo'] = int(line[82:86]) #olet分支上一个件号不准
+                materialList[-1]['size2'] = int(line[72:78]) / 16.0
+                materialList[-1]['partNo'] = int(line[82:86]) #olet分支的上一个件号是主管件号
+            #提取其他分支尺寸
             elif IsogenRecord in [46,51,61,81,86,91]:
-                materialList[-1]['size2'] = int(line[72:78])         
+                materialList[-1]['size2'] = int(line[72:78]) / 16.0         
             
             #提取并设定列表的最后一个字典的ref属性
             elif IsogenRecord == -39:
                 materialList[-1]['ref'] = line[6:]
+            #提取物料编码
             elif IsogenRecord == -20:
                 materialCodeList.append(dict(materialCodeDict))
                 materialCodeList[-1]['code'] = line[6:]
+            #提取物料描述
             elif IsogenRecord == -21:
                 materialCodeList[-1]['desc'] = line[6:]                       
             else:
@@ -163,6 +168,7 @@ def getMaterialList(content):
             #print str(e)
             pass
 
+    #通过件号连接描述与编码
     materialFullList = mergeMaterialList(materialList,materialCodeList)    
     return lineInfo,materialFullList
 
