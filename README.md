@@ -20,11 +20,13 @@ Intergraph 的 Spoolgen 软件可以利用IDF进行加工设计。
 [这里](http://www.bentleyuser.dk/sites/default/files/files/isogen_info.pdf) 是对IDF一些字段的定义。
 
 # 使用方法
-把pyIdf.py 放到idf的文件夹汇总，执行
+把pyIdf.py 放到idf的文件夹汇总，
+
+执行
 ```python
-python pyIdf.pyIDF
+python pyIdf.py
 ```
 
 程序会自动将所有idf的基本信息提取出来，存放的list.txt中，以tab为分隔符。
 
-可以将list.txt内容复制到excel中即可。
+可以将list.txt内容复制到excel中。
