@@ -98,15 +98,15 @@ def getMaterialList(content):
     #管线信息
     lineInfo = {'lineNo':'','rev':'','moduleNo':'','createTime':''}
     #材料明细
-    materialDict = {'rowNo':'','record':'','ea':1,'mm':'','mtoc':'','ref':'','partNo':''}
+    materialDict = {'rowNo':'','record':'','ea':1,'mm':'','mtoc':'','ref':'','partNo':'','tag':''}
     materialList = []
     #材料编码、描述
-    materialCodeDict = {'code':'','desc':'','tag':''}
+    materialCodeDict = {'code':'','desc':''}
     materialCodeList = ['']
     #材料明细特征值
     componentRecord = [30,35,40,45,50,55,60,65,70,75,
                        80,85,90,95,100,101,102,103,105,
-                       106,107,110,115,120,125,126,127,
+                       106,107,110,115,125,126,127,
                        130,132,134,136,150]
     lines = content.split('\n')
     #遍历IDF文档，将文档转换成材料清单与物料编码描述对照表,并且合并
@@ -137,6 +137,9 @@ def getMaterialList(content):
                 if IsogenRecord == 100:
                     x1,y1,z1,x2,y2,z2 = map(int,re.split('\s+',line[7:72].strip()))
                     materialList[-1]['mm'] = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+            elif IsogenRecord == -22:
+                materialList[-1]['tag'] = line[6:] 
+            
             #提取并设定列表的最后一个字典的ref属性
             elif IsogenRecord == -39:
                 materialList[-1]['ref'] = line[6:]
@@ -144,9 +147,7 @@ def getMaterialList(content):
                 materialCodeList.append(dict(materialCodeDict))
                 materialCodeList[-1]['code'] = line[6:]
             elif IsogenRecord == -21:
-                materialCodeList[-1]['desc'] = line[6:]
-            elif IsogenRecord == -22:
-                materialCodeList[-1]['tag'] = line[6:]            
+                materialCodeList[-1]['desc'] = line[6:]                       
             else:
                 pass
 
@@ -165,12 +166,55 @@ def mergeMaterialList(materialList,materialCodeList):
     """
     for i,line in enumerate(materialList):
         materialList[i].update(materialCodeList[materialList[i]['partNo']])
+    #print materialList
     return materialList
 
-if __name__ == '__main__':
-    tmp = normalize('test.idf')
-    b,c = getMaterialList(tmp)
-    for i in c:
-        print i
 
-    print b
+    
+
+if __name__ == '__main__':
+    #创建带标题的空文件
+    f = open('list.txt','w')
+    headlist = ['lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','desc','tag']
+    head = ''
+    for i in headlist:
+        head = head + i + '\t'
+    head = head + '\n'
+    f.write(head)
+    f.close()
+
+    #使用glob与os处理当前文件夹下所有idf文档
+    import os
+    import glob
+    for idf in glob.glob(os.getcwd() + '\\*.idf'):
+        print "Solving : " +  idf
+        f = open('list.txt','a')
+        tmp = normalize(idf)    
+        lineInfo,materialList = getMaterialList(tmp)
+        newline = ''
+        for line in materialList:
+            #print line
+            for i in headlist[0:4]:        
+                newline = newline + str(lineInfo[i]) + '\t'
+            for i in headlist[4:]:
+                newline = newline + str(line[i]) + '\t'
+            newline = newline + '\n'
+        f.write(newline)
+        f.close()
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
