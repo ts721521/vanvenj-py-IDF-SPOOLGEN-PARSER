@@ -98,7 +98,7 @@ def getMaterialList(content):
     #管线信息
     lineInfo = {'lineNo':'','rev':'','moduleNo':'','createTime':''}
     #材料明细
-    materialDict = {'rowNo':'','record':'','ea':1,'mm':'','mtoc':'','ref':'','partNo':'','tag':''}
+    materialDict = {'rowNo':'','record':'','ea':1,'mm':'','mtoc':'','ref':'','partNo':'','tag':'','size1':'','size2':''}
     materialList = []
     #材料编码、描述
     materialCodeDict = {'code':'','desc':''}
@@ -108,6 +108,8 @@ def getMaterialList(content):
                        80,85,90,95,100,101,102,103,105,
                        106,107,110,115,125,126,127,
                        130,132,134,136,150]
+    #带分支的特征值
+    #componentRecordWithSecondBranch = [41,46,51,61,81,86,91]
     lines = content.split('\n')
     #遍历IDF文档，将文档转换成材料清单与物料编码描述对照表,并且合并
     for row,line in enumerate(lines):
@@ -133,12 +135,18 @@ def getMaterialList(content):
                 materialList[-1]['record'] = IsogenRecord
                 materialList[-1]['mtoc'] = int(line.split(',')[2])
                 materialList[-1]['partNo'] = int(line[82:86])
+                materialList[-1]['size1'] = int(line[72:78])
                 #提取管子长度
                 if IsogenRecord == 100:
                     x1,y1,z1,x2,y2,z2 = map(int,re.split('\s+',line[7:72].strip()))
                     materialList[-1]['mm'] = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
             elif IsogenRecord == -22:
-                materialList[-1]['tag'] = line[6:] 
+                materialList[-1]['tag'] = line[6:]
+            elif IsogenRecord == 41:
+                materialList[-1]['size2'] = int(line[72:78])
+                materialList[-1]['partNo'] = int(line[82:86]) #olet分支上一个件号不准
+            elif IsogenRecord in [46,51,61,81,86,91]:
+                materialList[-1]['size2'] = int(line[72:78])         
             
             #提取并设定列表的最后一个字典的ref属性
             elif IsogenRecord == -39:
@@ -175,7 +183,7 @@ def mergeMaterialList(materialList,materialCodeList):
 if __name__ == '__main__':
     #创建带标题的空文件
     f = open('list.txt','w')
-    headlist = ['lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','desc','tag']
+    headlist = ['lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','size1','size2','desc','tag']
     head = ''
     for i in headlist:
         head = head + i + '\t'
