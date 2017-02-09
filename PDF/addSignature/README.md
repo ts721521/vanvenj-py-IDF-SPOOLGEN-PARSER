@@ -4,9 +4,9 @@
 # 使用须知
 - 需要安装python2.7
 - 需要安装PyPDF2包，使用阿里云镜像安装，速度比较快
-  ```
-  pip install --trusted-host=mirrors.aliyun.com --index-url=http://mirrors.aliyun.com/pypi/simple/ PyPDF2
-  ```
+```
+pip install --trusted-host=mirrors.aliyun.com --index-url=http://mirrors.aliyun.com/pypi/simple/ PyPDF2
+```
 
 # 如何使用
 1. 下载pyAddSignature.py
