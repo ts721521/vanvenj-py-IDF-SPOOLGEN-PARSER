@@ -98,7 +98,7 @@ def getMaterialList(content):
     #管线信息
     lineInfo = {'lineNo':'','rev':'','moduleNo':'','createTime':''}
     #材料明细
-    materialDict = {'rowNo':'','record':'','ea':1,'mm':'','mtoc':'','ref':'','partNo':'','tag':'','size1':'','size2':''}
+    materialDict = {'rowNo':'','record':'','ea':1,'mm':'','mtoc':'','ref':'','partNo':'','tag':'','size1':'','size2':'','size3':''}
     materialList = []
     #材料编码、描述
     materialCodeDict = {'code':'','desc':''}
@@ -145,11 +145,14 @@ def getMaterialList(content):
                 materialList[-1]['tag'] = line[6:]
             #提取olet分支尺寸及件号
             elif IsogenRecord == 41:
-                materialList[-1]['size2'] = int(line[72:78]) / 16.0
+                materialList[-1]['size3'] = int(line[72:78]) / 16.0
                 materialList[-1]['partNo'] = int(line[82:86]) #olet分支的上一个件号是主管件号
+            #提取带分支2的管件，比如REDU的分支尺寸就走0行
+            elif IsogenRecord == 0:
+                materialList[-1]['size2'] = int(line[72:78]) / 16.0
             #提取其他分支尺寸
             elif IsogenRecord in [46,51,61,81,86,91]:
-                materialList[-1]['size2'] = int(line[72:78]) / 16.0         
+                materialList[-1]['size3'] = int(line[72:78]) / 16.0         
             
             #提取并设定列表的最后一个字典的ref属性
             elif IsogenRecord == -39:
@@ -209,8 +212,8 @@ def setMtoCOn(filename):
 
 if __name__ == '__main__':
     #创建带标题的空文件
-    f = open('list.txt','w')
-    headlist = ['lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','size1','size2','desc','tag']
+    f = open('list.txt.xls','w')
+    headlist = ['lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','size1','size2','size3','desc','tag']
     head = ''
     for i in headlist:
         head = head + i + '\t'
@@ -223,7 +226,7 @@ if __name__ == '__main__':
     import glob
     for idf in glob.glob(os.getcwd() + '\\*.idf'):
         print "Solving : " +  idf
-        f = open('list.txt','a')
+        f = open('list.txt.xls','a')
         tmp = normalize(idf)    
         lineInfo,materialList = getMaterialList(tmp)
         newline = ''
