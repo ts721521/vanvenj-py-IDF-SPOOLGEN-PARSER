@@ -7,7 +7,9 @@ from bs4 import BeautifulSoup
 loginUrl = 'http://199.234.20.170:8032/login.aspx'
 s = session()
 r = s.get(loginUrl)
-bs = BeautifulSoup(r.text,"lxml")
+
+bs = BeautifulSoup(r.text)
+
 __VIEWSTATE = bs.select('#__VIEWSTATE')[0].get('value')
 __EVENTVALIDATION = bs.select('#__EVENTVALIDATION')[0].get('value')
 __VIEWSTATEGENERATOR = bs.select('#__VIEWSTATEGENERATOR')[0].get('value')
