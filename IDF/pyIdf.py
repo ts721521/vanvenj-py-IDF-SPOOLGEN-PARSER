@@ -140,6 +140,11 @@ def getMaterialList(content):
                 if IsogenRecord == 100:
                     x1,y1,z1,x2,y2,z2 = map(int,re.split('\s+',line[7:72].strip()))
                     materialList[-1]['mm'] = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2) / 100
+                #提取螺栓螺栓数量与长度
+                if IsogenRecord == 115:
+                    materialList[-1]['ea'] = int(line.split(',')[2])
+                    materialList[-1]['mm'] = int(line[111:117])
+                    
             #提取tag
             elif IsogenRecord == -22:
                 materialList[-1]['tag'] = line[6:]
