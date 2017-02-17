@@ -217,8 +217,9 @@ def setMtoCOn(filename):
 
 if __name__ == '__main__':
     #创建带标题的空文件
-    f = open('list.txt.xls','w')
-    headlist = ['lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','size1','size2','size3','desc','tag']
+    savedFileName = 'list.txt.xls'
+    f = open(savedFileName,'w')
+    headlist = ['filename','lineNo','rev','moduleNo','createTime','rowNo','record','ea','mm','mtoc','ref','partNo','code','size1','size2','size3','desc','tag']
     head = ''
     for i in headlist:
         head = head + i + '\t'
@@ -230,16 +231,16 @@ if __name__ == '__main__':
     import os
     import glob
     for idf in glob.glob(os.getcwd() + '\\*.idf'):
-        print "Solving : " +  idf
-        f = open('list.txt.xls','a')
+        print "Solving : " +  idf 
+        f = open(savedFileName,'a')
         tmp = normalize(idf)    
         lineInfo,materialList = getMaterialList(tmp)
         newline = ''
         for line in materialList:
-            #print line
-            for i in headlist[0:4]:        
+            newline = newline + os.path.basename(idf) + '\t'
+            for i in headlist[1:5]:        
                 newline = newline + str(lineInfo[i]) + '\t'
-            for i in headlist[4:]:
+            for i in headlist[5:]:
                 newline = newline + str(line[i]) + '\t'
             newline = newline + '\n'
         f.write(newline)
