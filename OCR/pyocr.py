@@ -36,6 +36,6 @@ if __name__ == '__main__':
 
     for word in words:
         w = json.loads(word)
-        plt.text(w['Left'],w['Top'] + w['Height'],w['WordText'],fontsize=w['Height'])
+        plt.text(w['Left'],w['Top'] + w['Height'],w['WordText'],fontsize=w['Height'],color='red')
 
     plt.show()
