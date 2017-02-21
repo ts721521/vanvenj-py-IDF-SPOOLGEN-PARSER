@@ -1,1 +1,5 @@
 .DS_Store
+shadowsocks/
+ShadowSocks-Client/
+cv/
+test/
