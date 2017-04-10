@@ -3,3 +3,6 @@ shadowsocks/
 ShadowSocks-Client/
 cv/
 test/
+SAP
+./SpoolGen_Data_Parser/*.log
+./SpoolGen_Data_Parser/*.xlsx
